@@ -1,9 +1,23 @@
 const { Router } = require('express');
-const { v4: uuid } = require('uuid');
+const { v4: uuid, validate } = require('uuid');
 
 const route = Router();
 
 const projects = [];
+
+function midVericationUUID(req, res, next) {
+    const {
+        id
+    } = req.params;
+
+    if(!validate(id)) {
+        return res.status(400).json({
+            message: 'Id invalided! :('
+        });
+    }
+
+    return next()
+}
 
 route.get('/projects', (req, res) => {
 
@@ -59,7 +73,7 @@ route.post('/projects', (req, res) => {
 });
 
 
-route.put('/projects/:id', (req, res) => {
+route.put('/projects/:id', midVericationUUID, (req, res) => {
 
     const {
         id
@@ -96,7 +110,7 @@ route.put('/projects/:id', (req, res) => {
 
 });
 
-route.delete('/projects/:id', (req, res) => {
+route.delete('/projects/:id', midVericationUUID, (req, res) => {
 
     const {
         id
